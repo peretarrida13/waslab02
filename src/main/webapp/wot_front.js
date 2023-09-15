@@ -64,9 +64,16 @@ function getTweets() {
 		if (req.status == 200) { // 200 OK
 			var tweet_list = req.responseText;
 			/*
-			 * TASK #2 -->
+			 * TASK #2 
 			 */
-			document.getElementById("tweet_list").innerHTML = tweet_list;
+			twJSON = JSON.parse(tweet_list);
+			twHTML = "";
+			for(let i = 0; i < twJSON.length; ++i){
+				var tw = twJSON[i];
+				twHTML += getTweetHTML(tw, "like");
+			}
+			
+			document.getElementById("tweet_list").innerHTML = twHTML;
 		}
 	};
 	req.send(null); 
