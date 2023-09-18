@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.security.MessageDigest;
 
 @WebServlet(urlPatterns = {"/tweets", "/tweets/*"})
 public class WoTServlet extends HttpServlet {
@@ -42,27 +41,6 @@ public class WoTServlet extends HttpServlet {
 		response.getWriter().println(job.toString());
 
     }
-    
-    //codificació treta de internet
-    public static String sha256(String base) {
-		try {
-			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-	        byte[] hash = digest.digest(base.getBytes("UTF-8"));
-	        StringBuffer hexString = new StringBuffer();
-
-	        for (int i = 0; i < hash.length; i++) {
-	            String hex = Integer.toHexString(0xff & hash[i]);
-	            if (hex.length() == 1) {
-	            	hexString.append('0');
-	            }
-	            hexString.append(hex);
-	        }
-
-	        return hexString.toString();
-	    } catch(Exception e) {
-	    	throw new RuntimeException(e);
-	    }
-	}
 
     @Override
 	// Implements POST http://localhost:8080/waslab02/tweets/:id/likes
@@ -94,7 +72,6 @@ public class WoTServlet extends HttpServlet {
 			Tweet tw = tweetDAO.insertTweet(author, text);
 			
 			JSONObject jo = new JSONObject(tw);
-			jo.put("token", sha256(String.valueOf(tw.getId())));
 			response.getWriter().println(jo.toString());
 			
 		}
@@ -106,10 +83,7 @@ public class WoTServlet extends HttpServlet {
 			throws IOException, ServletException {
     	String uri = req.getRequestURI();
     	long id = Long.valueOf(uri.substring(TWEETS_URI.length()));
-    	String tokenID = sha256(String.valueOf(id));
-    	
-		String token = req.getHeader("Authorization");
-		if (token.equals("token" + tokenID)) tweetDAO.deleteTweet(id);
+    	tweetDAO.deleteTweet(id);
     	
 		//throw new ServletException("DELETE not yet implemented");
 	}
