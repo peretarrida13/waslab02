@@ -52,23 +52,22 @@ function deleteHandler(tweetID) {
 	var uri = tweetsURI+ "/" + tweetID;
 	var token = localStorage.getItem("token" + tweetID);
 
-	// e.g. to like tweet #6 we call http://localhost:8080/waslab02/tweets/6
-
 	req = new XMLHttpRequest();
 	req.open('DELETE', uri, /*async*/true);
 	req.setRequestHeader("Authorization", token);
 	req.onload = function() { 
-		if (req.status == 200) { // 200 OK
+		if (req.status == 200) { 
 			var tw = document.getElementById("tweet_" + tweetID);
 			localStorage.removeItem("token" + tweetID);
 			localStorage.removeItem("id" + tweetID);
+			console.log(tweetID)
 			tw.remove();
 			document.getElementById(target).getElementsByClassName("numlikes")[0].innerHTML = req.responseText;
 		}
 	};
 	req.send(/*no params*/null);
 }
-
+ 
 function getTweetHTML(tweet, action) {  // action :== "like" xor "delete"
 	var dat = new Date(tweet.date);
 	var dd = dat.toDateString()+" @ "+dat.toLocaleTimeString();
